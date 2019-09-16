@@ -9,3 +9,14 @@ C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAno
 C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\Application.dll
 C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\Application.pdb
 C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\Application.csprojAssemblyReference.cache
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\Application.deps.json
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\Application.runtimeconfig.json
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\Application.runtimeconfig.dev.json
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\Application.dll
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\Application.pdb
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.1\Application.csprojAssemblyReference.cache
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.1\Application.csproj.CoreCompileInputs.cache
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.1\Application.AssemblyInfoInputs.cache
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.1\Application.AssemblyInfo.cs
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.1\Application.dll
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.1\Application.pdb

@@ -4062,11 +4062,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gmckeever.NTS\\source\\repos\\ProductSalesAnomalyDetection\\ProductSalesAnomalyDetection\\Application.csproj",
+      "projectUniqueName": "C:\\Users\\gmckeever.NTS\\source\\repos\\ml-app\\Application\\Application.csproj",
       "projectName": "Application",
-      "projectPath": "C:\\Users\\gmckeever.NTS\\source\\repos\\ProductSalesAnomalyDetection\\ProductSalesAnomalyDetection\\Application.csproj",
+      "projectPath": "C:\\Users\\gmckeever.NTS\\source\\repos\\ml-app\\Application\\Application.csproj",
       "packagesPath": "C:\\Users\\gmckeever.NTS\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gmckeever.NTS\\source\\repos\\ProductSalesAnomalyDetection\\ProductSalesAnomalyDetection\\obj\\",
+      "outputPath": "C:\\Users\\gmckeever.NTS\\source\\repos\\ml-app\\Application\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\ProgramData\\Xamarin\\NuGet\\",
