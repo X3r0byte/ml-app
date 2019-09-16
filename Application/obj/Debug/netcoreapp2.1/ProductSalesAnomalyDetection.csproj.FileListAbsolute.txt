@@ -1,0 +1,12 @@
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\bin\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.deps.json
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\bin\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.runtimeconfig.json
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\bin\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.runtimeconfig.dev.json
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\bin\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.dll
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.csprojAssemblyReference.cache
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.csproj.CoreCompileInputs.cache
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.AssemblyInfoInputs.cache
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.AssemblyInfo.cs
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\bin\Debug\netcoreapp2.1\data\product-sales.csv
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\bin\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.pdb
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.dll
+C:\Users\gmckeever.NTS\source\repos\ProductSalesAnomalyDetection\ProductSalesAnomalyDetection\obj\Debug\netcoreapp2.1\ProductSalesAnomalyDetection.pdb
