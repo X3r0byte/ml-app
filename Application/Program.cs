@@ -39,9 +39,6 @@ namespace Application
                     Predict();
                 }
 
-                // test
-
-
                 input = Console.ReadLine();
                 exit = input[0];
             }
