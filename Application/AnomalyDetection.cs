@@ -4,9 +4,8 @@ using Microsoft.ML.Data;
 using Microsoft.ML;
 using DataSet;
 
-namespace AnomalyDetection
+namespace Application
 {
-
     public class PredictionVector
     {
         //vector to hold alert,score,p-value values
@@ -40,13 +39,12 @@ namespace AnomalyDetection
                 }
                 Console.WriteLine(results);
             }
-            Console.WriteLine("");
 
+            Console.WriteLine("");
         }
 
         public void DetectSpike(MLContext mlContext, int docSize, IDataView data)
         {
-
             var iidSpikeEstimator = mlContext.Transforms.DetectIidSpike(outputColumnName: nameof(PredictionVector.prediction),
                                                                         inputColumnName: nameof(AnomalyData.value),
                                                                         confidence: 95,
@@ -70,14 +68,14 @@ namespace AnomalyDetection
 
                 Console.WriteLine(results);
             }
-            Console.WriteLine("");
 
+            Console.WriteLine("");
         }
 
         static IDataView CreateEmptyDataView(MLContext mlContext)
         {
             // Create empty DataView. We just need the schema to call Fit() for the time series transforms
-            IEnumerable<AnomalyDetect> enumerableData = new List<AnomalyDetect>();
+            IEnumerable<AnomalyData> enumerableData = new List<AnomalyData>();
             return mlContext.Data.LoadFromEnumerable(enumerableData);
         }
     }

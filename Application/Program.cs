@@ -1,87 +1,81 @@
 ﻿using System;
 using System.IO;
 using Microsoft.ML;
-using AnomalyDetection;
-using RegressionPrediction;
 using DataSet;
+using static Microsoft.ML.DataOperationsCatalog;
 
 namespace Application
 {
     class Program
     {
-        static readonly string anomalyData = Path.Combine(Environment.CurrentDirectory, "Data", "anomaly-data.csv");
+        static readonly string anomalyData = Path.Combine(Environment.CurrentDirectory, "Data", "product-sales.csv");
         static readonly string regressionData = Path.Combine(Environment.CurrentDirectory, "Data", "prediction-data-train.csv");
-        static readonly string _modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "Model.zip");
+        static readonly string binaryData = Path.Combine(Environment.CurrentDirectory, "Data", "yelp_labelled.txt");
+        private static readonly string trainDataPath = Path.Combine(Environment.CurrentDirectory, "Data", "issues-train.tsv");
 
-        static ITransformer regressionModel;
         static RegressionPredict regressionPredict = new RegressionPredict();
         static AnomalyDetect anomalyDetect = new AnomalyDetect();
+        static Classification classification = new Classification();
+        static BinaryPrediction binaryPredict = new BinaryPrediction();
 
         static MLContext mlContext = new MLContext();
 
         //assign the Number of records in dataset file to constant variable
-        const int _docsize = 213;
+        const int _docsize = 20;
 
         static void Main(string[] args)
         {
             char exit = ' ';
             string input = "";
 
+            Classification.mlContext = mlContext;
+
             Console.Write("initializing... ");
 
             InitRegressionPrediction();
-            // RunAnomalyDetection();
+            InitBinaryPrediction();
+            InitClassification();
 
-            while(exit != 'q')
+            RunAnomalyDetection();
+
+            while (exit != 'q')
             {
-                if(input == "test")
-                {
-                    Predict();
-                }
-
                 input = Console.ReadLine();
                 exit = input[0];
             }
         }
 
-        public static void InitRegressionPrediction()
+        public static void InitBinaryPrediction()
         {
-            regressionModel = regressionPredict.Train(mlContext, regressionData);
-            regressionPredict.Evaluate(mlContext, regressionModel);
+            TrainTestData splitDataView = binaryPredict.LoadData(mlContext, binaryData);
+            ITransformer model = binaryPredict.BuildAndTrainModel(mlContext, splitDataView.TrainSet);
 
-            var taxiTripSample = new RegressionData()
-            {
-                VendorId = "VTS",
-                RateCode = "1",
-                PassengerCount = 1,
-                TripTime = 1140,
-                TripDistance = 3.75f,
-                PaymentType = "CRD",
-                FareAmount = 0 // To predict. Actual/Observed = 15.5
-            };
-
-            regressionPredict.TestSinglePrediction(mlContext, regressionModel, taxiTripSample);
+            binaryPredict.Evaluate(mlContext, model, splitDataView.TestSet);
+            binaryPredict.UseModelWithBatchItems(mlContext, model);
         }
 
-        public static void Predict()
+        public static void InitClassification()
         {
-            var taxiTripSample = new RegressionData()
-            {
-                VendorId = "VTS",
-                RateCode = "1",
-                PassengerCount = 2,
-                TripTime = 1620,
-                TripDistance = 2.79f,
-                PaymentType = "CRD",
-                FareAmount = 0 // To predict.
-            };
+            IDataView trainingDataView = mlContext.Data.LoadFromTextFile<GitHubIssue>(trainDataPath, hasHeader: true);
+            var pipeline = classification.ProcessData();
+            var trainingPipeline = classification.BuildAndTrainModel(trainingDataView, pipeline);
 
-            regressionPredict.Predict(mlContext, regressionModel, taxiTripSample);
+            classification.Evaluate(trainingDataView.Schema);
+            classification.PredictIssue();
+        }
+
+        public static void InitRegressionPrediction()
+        {
+            ITransformer regressionModel = regressionPredict.Train(mlContext, regressionData);
+
+            regressionPredict.Evaluate(mlContext, regressionModel);
+            regressionPredict.TestSinglePrediction(mlContext, regressionModel);
         }
 
         public static void RunAnomalyDetection()
         {
-            IDataView dataView = mlContext.Data.LoadFromTextFile<AnomalyDetect>(path: anomalyData, hasHeader: true, separatorChar: ',');
+            IDataView dataView = mlContext.Data.LoadFromTextFile<AnomalyData>(path: anomalyData, hasHeader: true, separatorChar: ',');
+
             anomalyDetect.DetectSpike(mlContext, _docsize, dataView);
             anomalyDetect.DetectChangepoint(mlContext, _docsize, dataView);
         }
