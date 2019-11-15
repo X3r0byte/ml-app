@@ -16,33 +16,40 @@ namespace Application
         static readonly string _testDataPath = Path.Combine(Environment.CurrentDirectory, "Data", "prediction-data-test.csv");
         private static readonly string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "model-regression.zip");
 
-        ITransformer model;
-        DataViewSchema schema;
+        public static ITransformer trainedModel;
+        public static DataViewSchema schema;
+        public static IDataView dataView;
 
-        public ITransformer Train(MLContext context, string dataPath)
+        public void LoadData(MLContext context, string data)
         {
-            IDataView dataView = context.Data.LoadFromTextFile<RegressionData>(dataPath, hasHeader: true, separatorChar: ',');
-            var pipeline = context.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: "FareAmount")
-                .Append(context.Transforms.Categorical.OneHotEncoding(outputColumnName: "VendorIdEncoded", inputColumnName: "VendorId"))
-                .Append(context.Transforms.Categorical.OneHotEncoding(outputColumnName: "RateCodeEncoded", inputColumnName: "RateCode"))
-                .Append(context.Transforms.Categorical.OneHotEncoding(outputColumnName: "PaymentTypeEncoded", inputColumnName: "PaymentType"))
-                .Append(context.Transforms.Concatenate("Features", "VendorIdEncoded", "RateCodeEncoded", "PassengerCount", "TripTime", "TripDistance", "PaymentTypeEncoded"))
-                .Append(context.Regression.Trainers.FastTree());
+            mlContext = context;
+            dataView = context.Data.LoadFromTextFile<RegressionData>(data, hasHeader: true, separatorChar: ',');
+        }
+
+        public void BuildAndTrainModel(bool forceRetrain)
+        {
+            if(LoadModel() && !forceRetrain)
+            {
+                return;
+            }
+
+            var pipeline = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: "FareAmount")
+                .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "VendorIdEncoded", inputColumnName: "VendorId"))
+                .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "RateCodeEncoded", inputColumnName: "RateCode"))
+                .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "PaymentTypeEncoded", inputColumnName: "PaymentType"))
+                .Append(mlContext.Transforms.Concatenate("Features", "VendorIdEncoded", "RateCodeEncoded", "PassengerCount", "TripTime", "TripDistance", "PaymentTypeEncoded"))
+                .Append(mlContext.Regression.Trainers.FastTree());
 
             var newModel = pipeline.Fit(dataView);
 
-            model = newModel;
-            mlContext = context;
-
+            trainedModel = newModel;
             schema = dataView.Schema;
-
-            return newModel;
         }
 
-        public void Evaluate(MLContext mlContext, ITransformer model)
+        public void Evaluate()
         {
             IDataView dataView = mlContext.Data.LoadFromTextFile<RegressionData>(_testDataPath, hasHeader: true, separatorChar: ',');
-            var predictions = model.Transform(dataView);
+            var predictions = trainedModel.Transform(dataView);
             var metrics = mlContext.Regression.Evaluate(predictions, "Label", "Score");
 
             Console.WriteLine();
@@ -52,27 +59,28 @@ namespace Application
             Console.WriteLine($"*       RSquared Score:      {metrics.RSquared:0.##}");
             Console.WriteLine($"*       Root Mean Squared Error:      {metrics.RootMeanSquaredError:#.##}");
 
-            SaveModelAsFile(mlContext, schema, model);
+            SaveModelAsFile(schema);
         }
 
-        public static void SaveModelAsFile(MLContext mlContext, DataViewSchema trainingDataViewSchema, ITransformer model)
+        public static void SaveModelAsFile(DataViewSchema trainingDataViewSchema)
         {
-            mlContext.Model.Save(model, trainingDataViewSchema, modelPath);
+            mlContext.Model.Save(trainedModel, trainingDataViewSchema, modelPath);
         }
 
-        public static Boolean ModelExists()
+        public Boolean LoadModel()
         {
-            ITransformer loadedModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
-
-            if (loadedModel != null)
+            try
             {
+                trainedModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
                 return true;
             }
-
-            else return false;
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
         }
 
-        public void TestSinglePrediction(MLContext mlContext, ITransformer model)
+        public void TestModel()
         {
             var taxiTripSample = new RegressionData()
             {
@@ -85,7 +93,7 @@ namespace Application
                 FareAmount = 0 // To predict. Actual/Observed = 15.5
             };
 
-            var predictionFunction = mlContext.Model.CreatePredictionEngine<RegressionData, RegressionPredict>(model);
+            var predictionFunction = mlContext.Model.CreatePredictionEngine<RegressionData, RegressionPredict>(trainedModel);
 
             var prediction = predictionFunction.Predict(taxiTripSample);
 

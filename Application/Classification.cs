@@ -8,15 +8,21 @@ namespace Application
 {
     public class Classification
     {
-        public static MLContext mlContext { get; set; }
+        public  MLContext mlContext { get; set; }
 
         private static readonly string appPath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
         private static readonly string testDataPath = Path.Combine(Environment.CurrentDirectory, "Data", "issues-test.tsv");
         private static readonly string modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "model-classification.zip");
 
-        private static PredictionEngine<GitHubIssue, IssuePrediction> predEngine;
-        private static ITransformer trainedModel;
-        static IDataView _trainingDataView;
+        public static PredictionEngine<GitHubIssue, IssuePrediction> predEngine;
+        public static ITransformer trainedModel;
+        public static IDataView trainingDataView;
+
+        public void LoadData(MLContext context, string data)
+        {
+            mlContext = context;
+            trainingDataView = mlContext.Data.LoadFromTextFile<GitHubIssue>(data, hasHeader: true);
+        }
 
         public IEstimator<ITransformer> ProcessData()
         {
@@ -29,13 +35,17 @@ namespace Application
             return pipeline;
         }
 
-        public IEstimator<ITransformer> BuildAndTrainModel(IDataView trainingDataView, IEstimator<ITransformer> pipeline)
+        public void BuildAndTrainModel(IEstimator<ITransformer> pipeline, bool forceRetrain)
         {
             var trainingPipeline = pipeline.Append(mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy("Label", "Features"))
                                            .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 
-            trainedModel = trainingPipeline.Fit(trainingDataView);
+            if (LoadModel() && !forceRetrain)
+            {
+                return;
+            }
 
+            trainedModel = trainingPipeline.Fit(trainingDataView);
             predEngine = mlContext.Model.CreatePredictionEngine<GitHubIssue, IssuePrediction>(trainedModel);
 
             GitHubIssue issue = new GitHubIssue()
@@ -48,10 +58,9 @@ namespace Application
 
             Console.WriteLine($"=============== Single Prediction just-trained-model - Result: {prediction.Area} ===============");
 
-            return trainingPipeline;
         }
 
-        public void Evaluate(DataViewSchema trainingDataViewSchema)
+        public void Evaluate()
         {
             var testDataView = mlContext.Data.LoadFromTextFile<GitHubIssue>(testDataPath, hasHeader: true);
             var testMetrics = mlContext.MulticlassClassification.Evaluate(trainedModel.Transform(testDataView));
@@ -65,37 +74,36 @@ namespace Application
             Console.WriteLine($"*       LogLossReduction: {testMetrics.LogLossReduction:#.###}");
             Console.WriteLine($"*************************************************************************************************************");
 
-            SaveModelAsFile(mlContext, trainingDataViewSchema, trainedModel);
+            SaveModelAsFile(trainingDataView.Schema);
         }
 
-        public void SaveModelAsFile(MLContext mlContext, DataViewSchema trainingDataViewSchema, ITransformer model)
+        public void SaveModelAsFile(DataViewSchema trainingDataViewSchema)
         {
-            mlContext.Model.Save(model, trainingDataViewSchema, modelPath);
+            mlContext.Model.Save(trainedModel, trainingDataViewSchema, modelPath);
         }
 
-        public Boolean ModelExists()
+        public Boolean LoadModel()
         {
-            ITransformer loadedModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
-
-            if (loadedModel != null)
+            try
             {
+                trainedModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
                 return true;
             }
-
-            else return false;
+            catch(FileNotFoundException)
+            {
+                return false;
+            }
         }
 
-        public void PredictIssue()
+        public void TestModel()
         {
-            ITransformer loadedModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
-
             GitHubIssue singleIssue = new GitHubIssue()
             {
                 Title = "Entity Framework crashes",
                 Description = "When connecting to the database, EF is crashing"
             };
 
-            predEngine = mlContext.Model.CreatePredictionEngine<GitHubIssue, IssuePrediction>(loadedModel);
+            predEngine = mlContext.Model.CreatePredictionEngine<GitHubIssue, IssuePrediction>(trainedModel);
             var prediction = predEngine.Predict(singleIssue);
             Console.WriteLine($"=============== Single Prediction - Result: {prediction.Area} ===============");
         }

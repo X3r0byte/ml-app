@@ -28,15 +28,14 @@ namespace Application
             char exit = ' ';
             string input = "";
 
-            Classification.mlContext = mlContext;
+            classification.mlContext = mlContext;
 
             Console.Write("initializing... ");
 
-            InitRegressionPrediction();
-            InitBinaryPrediction();
-            InitClassification();
-
-            RunAnomalyDetection();
+             InitRegressionPrediction();
+             InitBinaryPrediction();
+             InitClassification();
+             RunAnomalyDetection();
 
             while (exit != 'q')
             {
@@ -47,37 +46,60 @@ namespace Application
 
         public static void InitBinaryPrediction()
         {
+            // load the mlContext and data path
             TrainTestData splitDataView = binaryPredict.LoadData(mlContext, binaryData);
-            ITransformer model = binaryPredict.BuildAndTrainModel(mlContext, splitDataView.TrainSet);
 
-            binaryPredict.Evaluate(mlContext, model, splitDataView.TestSet);
-            binaryPredict.UseModelWithBatchItems(mlContext, model);
+            // create the model, boolean to force model retrain
+            binaryPredict.BuildAndTrainModel(splitDataView.TrainSet, false);
+
+            // evaluate the model against test data
+            binaryPredict.Evaluate(splitDataView.TestSet);
+
+            // test output with a test method
+            binaryPredict.TestModel();
         }
 
         public static void InitClassification()
         {
-            IDataView trainingDataView = mlContext.Data.LoadFromTextFile<GitHubIssue>(trainDataPath, hasHeader: true);
-            var pipeline = classification.ProcessData();
-            var trainingPipeline = classification.BuildAndTrainModel(trainingDataView, pipeline);
+            // load the mlContext and data path
+            classification.LoadData(mlContext, trainDataPath);
+            IEstimator<ITransformer> pipeline = classification.ProcessData();
 
-            classification.Evaluate(trainingDataView.Schema);
-            classification.PredictIssue();
+            // create the model, boolean to force model retrain
+            classification.BuildAndTrainModel(pipeline, false);
+
+            // evaluate the model against test data
+            classification.Evaluate();
+
+            // test output with a test method
+            classification.TestModel();
         }
 
         public static void InitRegressionPrediction()
         {
-            ITransformer regressionModel = regressionPredict.Train(mlContext, regressionData);
+            // load the mlContext and data path
+            regressionPredict.LoadData(mlContext, regressionData);
 
-            regressionPredict.Evaluate(mlContext, regressionModel);
-            regressionPredict.TestSinglePrediction(mlContext, regressionModel);
+            // create the model, boolean to force model retrain
+            regressionPredict.BuildAndTrainModel(false);
+
+            // evaluate the model against test data
+            regressionPredict.Evaluate();
+
+            // test output with a test method
+            regressionPredict.TestModel();
         }
 
         public static void RunAnomalyDetection()
         {
-            IDataView dataView = mlContext.Data.LoadFromTextFile<AnomalyData>(path: anomalyData, hasHeader: true, separatorChar: ',');
+            // load the mlContext and data path
+            anomalyDetect.LoadData(mlContext, anomalyData);
 
-            anomalyDetect.DetectSpike(mlContext, _docsize, dataView);
-            anomalyDetect.DetectChangepoint(mlContext, _docsize, dataView);
+            // anomaly detection does not require a model
+
+            // evaluate model against test data
+            anomalyDetect.DetectSpike(_docsize);
+            anomalyDetect.DetectChangepoint(_docsize);
         }
     }
 }

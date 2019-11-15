@@ -15,15 +15,24 @@ namespace Application
 
     public class AnomalyDetect
     {
-        public void DetectChangepoint(MLContext mlContext, int docSize, IDataView data)
+        public static IDataView dataView;
+        public static MLContext mlContext;
+
+        public void LoadData(MLContext context, string data)
+        {
+            mlContext = context;
+            dataView = mlContext.Data.LoadFromTextFile<AnomalyData>(path: data, hasHeader: true, separatorChar: ',');
+        }
+
+        public void DetectChangepoint(int docSize)
         {
             var iidChangePointEstimator = mlContext.Transforms.DetectIidChangePoint(outputColumnName: nameof(PredictionVector.prediction),
                                                                                     inputColumnName: nameof(AnomalyData.value),
                                                                                     confidence: 95,
                                                                                     changeHistoryLength: docSize / 4);
 
-            ITransformer iidChangePointTransform = iidChangePointEstimator.Fit(CreateEmptyDataView(mlContext));
-            IDataView transformedData = iidChangePointTransform.Transform(data);
+            ITransformer iidChangePointTransform = iidChangePointEstimator.Fit(CreateEmptyDataView());
+            IDataView transformedData = iidChangePointTransform.Transform(dataView);
 
             var predictions = mlContext.Data.CreateEnumerable<PredictionVector>(transformedData, reuseRowObject: false);
 
@@ -43,15 +52,15 @@ namespace Application
             Console.WriteLine("");
         }
 
-        public void DetectSpike(MLContext mlContext, int docSize, IDataView data)
+        public void DetectSpike(int docSize)
         {
             var iidSpikeEstimator = mlContext.Transforms.DetectIidSpike(outputColumnName: nameof(PredictionVector.prediction),
                                                                         inputColumnName: nameof(AnomalyData.value),
                                                                         confidence: 95,
                                                                         pvalueHistoryLength: docSize / 4);
 
-            ITransformer iidSpikeTransform = iidSpikeEstimator.Fit(CreateEmptyDataView(mlContext));
-            IDataView transformedData = iidSpikeTransform.Transform(data);
+            ITransformer iidSpikeTransform = iidSpikeEstimator.Fit(CreateEmptyDataView());
+            IDataView transformedData = iidSpikeTransform.Transform(dataView);
 
             var predictions = mlContext.Data.CreateEnumerable<PredictionVector>(transformedData, reuseRowObject: false);
 
@@ -72,7 +81,7 @@ namespace Application
             Console.WriteLine("");
         }
 
-        static IDataView CreateEmptyDataView(MLContext mlContext)
+        public IDataView CreateEmptyDataView()
         {
             // Create empty DataView. We just need the schema to call Fit() for the time series transforms
             IEnumerable<AnomalyData> enumerableData = new List<AnomalyData>();
