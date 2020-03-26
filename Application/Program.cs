@@ -1,15 +1,17 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Microsoft.ML;
-using DataSet;
 using static Microsoft.ML.DataOperationsCatalog;
+
 
 namespace Application
 {
     class Program
     {
         static readonly string anomalyData = Path.Combine(Environment.CurrentDirectory, "Data", "product-sales.csv");
-        static readonly string regressionData = Path.Combine(Environment.CurrentDirectory, "Data", "prediction-data-train.csv");
+        static readonly string regressionData = Path.Combine(Environment.CurrentDirectory, "Data", "regrex3large.csv");
+       // static readonly string regressionData = Path.Combine(Environment.CurrentDirectory, "Data", "taxi-fare-train.csv");
         static readonly string binaryData = Path.Combine(Environment.CurrentDirectory, "Data", "yelp_labelled.txt");
         private static readonly string trainDataPath = Path.Combine(Environment.CurrentDirectory, "Data", "issues-train.tsv");
 
@@ -25,23 +27,23 @@ namespace Application
 
         static void Main(string[] args)
         {
-            char exit = ' ';
-            string input = "";
-
             classification.mlContext = mlContext;
 
             Console.Write("initializing... ");
 
-             InitRegressionPrediction();
-             InitBinaryPrediction();
-             InitClassification();
-             RunAnomalyDetection();
+            // NetLink.StartServer();
 
-            while (exit != 'q')
+             InitRegressionPrediction();
+            // InitBinaryPrediction();
+            // InitClassification();
+            // RunAnomalyDetection();
+
+            while(true)
             {
-                input = Console.ReadLine();
-                exit = input[0];
+                float distance = float.Parse(Console.ReadLine().ToString());
+                regressionPredict.TestModel(distance);
             }
+
         }
 
         public static void InitBinaryPrediction()
@@ -87,7 +89,7 @@ namespace Application
             regressionPredict.Evaluate();
 
             // test output with a test method
-            regressionPredict.TestModel();
+            regressionPredict.TestModel(3.75f);
         }
 
         public static void RunAnomalyDetection()
@@ -97,8 +99,10 @@ namespace Application
 
             // anomaly detection does not require a model
 
-            // evaluate model against test data
+            // evaluate model against test data, detect a spike
             anomalyDetect.DetectSpike(_docsize);
+
+            // evaluate model against test data, detect a changepoint
             anomalyDetect.DetectChangepoint(_docsize);
         }
     }

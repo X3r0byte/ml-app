@@ -1,0 +1,22 @@
+command,intent
+play a song,music
+lets hear this song,music
+play some music,music
+music,music
+play this,music
+lets listen to,music
+I want to hear,music
+l want to listen to,music
+play me a song,music
+play me a melody,music
+execute command,exe
+run function,exe
+do this,exe
+start diagnostics,exe
+start a program,exe
+do a task for me,exe
+retrain the dataset,exe
+execute a function,exe
+execute,exe
+run,exe
+function,exe

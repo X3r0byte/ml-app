@@ -1,4 +1,5 @@
 ﻿using Microsoft.ML.Data;
+using System;
 
 namespace DataSet
 {
@@ -8,26 +9,71 @@ namespace DataSet
     /// </summary>
     class RegressionData
     {
+        //[LoadColumn(0)]
+        //public string VendorId;
+
+        //[LoadColumn(1)]
+        //public string RateCode;
+
+        //[LoadColumn(2)]
+        //public float PassengerCount;
+
+        //[LoadColumn(3)]
+        //public float TripTime;
+
+        //[LoadColumn(4)]
+        //public float TripDistance;
+
+        //[LoadColumn(5)]
+        //public string PaymentType;
+
+        //[LoadColumn(6)]
+        //public float FareAmount;
+
+        // [LoadColumn(0)]
+        // public string Date;
+
+        //[LoadColumn(0)]
+        //public float Billable;
+
+        //[LoadColumn(1)]
+        //public float Billed;
+
+
         [LoadColumn(0)]
-        public string VendorId;
+        public int obs;
 
         [LoadColumn(1)]
-        public string RateCode;
+        public float x1;
 
         [LoadColumn(2)]
-        public float PassengerCount;
+        public float x2;
 
         [LoadColumn(3)]
-        public float TripTime;
+        public float y1;
 
         [LoadColumn(4)]
-        public float TripDistance;
+        public float y2;
 
         [LoadColumn(5)]
-        public string PaymentType;
+        public float y3;
 
         [LoadColumn(6)]
-        public float FareAmount;
+        public float y4;
+
+        [LoadColumn(6)]
+        public float y5;
+
+
+
+
+
+    }
+
+    public class RegressionPrediction
+    {
+        [ColumnName("Score")]
+        public float y5;
     }
 
     class AnomalyData

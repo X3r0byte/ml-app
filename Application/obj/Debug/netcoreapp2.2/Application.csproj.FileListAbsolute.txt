@@ -1,0 +1,13 @@
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\data\issues-test.tsv
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\data\issues-train.tsv
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\data\product-sales.csv
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\data\yelp_labelled.txt
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\Application.deps.json
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\Application.runtimeconfig.json
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\Application.runtimeconfig.dev.json
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\Application.dll
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.2\Application.pdb
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.AssemblyInfoInputs.cache
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.AssemblyInfo.cs
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.dll
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.pdb

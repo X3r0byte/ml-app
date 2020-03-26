@@ -23,3 +23,4 @@ C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\d
 C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\data\yelp_labelled.txt
 C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\data\issues-test.tsv
 C:\Users\gmckeever.NTS\source\repos\ml-app\Application\bin\Debug\netcoreapp2.1\data\issues-train.tsv
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.1\Application.csprojAssemblyReference.cache
