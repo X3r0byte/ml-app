@@ -11,3 +11,6 @@ C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\A
 C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.AssemblyInfo.cs
 C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.dll
 C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.pdb
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.csproj.CoreCompileInputs.cache
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.genruntimeconfig.cache
+C:\Users\gmckeever.NTS\source\repos\ml-app\Application\obj\Debug\netcoreapp2.2\Application.csprojAssemblyReference.cache

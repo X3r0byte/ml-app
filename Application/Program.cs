@@ -3,14 +3,15 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.ML;
 using static Microsoft.ML.DataOperationsCatalog;
+using DataSet;
 
 
 namespace Application
 {
     class Program
     {
-        static readonly string anomalyData = Path.Combine(Environment.CurrentDirectory, "Data", "product-sales.csv");
-        static readonly string regressionData = Path.Combine(Environment.CurrentDirectory, "Data", "regrex3large.csv");
+        static readonly string anomalyData = Path.Combine(Environment.CurrentDirectory, "Data", "anom.csv");
+        static readonly string regressionData = Path.Combine(Environment.CurrentDirectory, "Data", "taxi-fare-train.csv");
        // static readonly string regressionData = Path.Combine(Environment.CurrentDirectory, "Data", "taxi-fare-train.csv");
         static readonly string binaryData = Path.Combine(Environment.CurrentDirectory, "Data", "yelp_labelled.txt");
         private static readonly string trainDataPath = Path.Combine(Environment.CurrentDirectory, "Data", "issues-train.tsv");
@@ -33,16 +34,18 @@ namespace Application
 
             // NetLink.StartServer();
 
-             InitRegressionPrediction();
+            // InitRegressionPrediction();
             // InitBinaryPrediction();
             // InitClassification();
-            // RunAnomalyDetection();
+            RunAnomalyDetection();
 
-            while(true)
-            {
-                float distance = float.Parse(Console.ReadLine().ToString());
-                regressionPredict.TestModel(distance);
-            }
+            Console.ReadLine();
+
+            //while(true)
+            //{
+            //    float distance = float.Parse(Console.ReadLine().ToString());
+            //    regressionPredict.TestModel(distance);
+            //}
 
         }
 
@@ -83,13 +86,24 @@ namespace Application
             regressionPredict.LoadData(mlContext, regressionData);
 
             // create the model, boolean to force model retrain
-            regressionPredict.BuildAndTrainModel(false);
+            regressionPredict.BuildAndTrainModel();
 
             // evaluate the model against test data
             regressionPredict.Evaluate();
 
-            // test output with a test method
-            regressionPredict.TestModel(3.75f);
+			// test output with a test method
+
+			var sample = 
+			new RegressionData {
+				VendorId = "VTS",
+				RateCode = "1",
+				PassengerCount = 1,
+				TripTime = 900,
+				TripDistance = 8.63f,
+				PaymentType = "CRD",
+				FareAmount = 0 // To predict. Actual/Observed = 15.5
+			};
+			regressionPredict.TestModel(sample);
         }
 
         public static void RunAnomalyDetection()
@@ -103,7 +117,10 @@ namespace Application
             anomalyDetect.DetectSpike(_docsize);
 
             // evaluate model against test data, detect a changepoint
-            anomalyDetect.DetectChangepoint(_docsize);
+            //anomalyDetect.DetectChangepoint(_docsize);
         }
     }
+
+
+
 }
