@@ -26,19 +26,19 @@ namespace Application
         {
             mlContext = context;
             dataView = mlContext.Data.LoadFromTextFile<AnomalyData>(path: data, hasHeader: true, separatorChar: ',');
-            List<int> values = new List<int>();
+            var values = new List<double>();
 
             var dt = ConvertCSVtoDataTable(data);
 
             foreach(DataRow row in dt.Rows)
 			{
-                values.Add(int.Parse(Math.Round(double.Parse(row["value"].ToString()), 0).ToString()));
+                values.Add(double.Parse(row["value"].ToString()));
 			}
 
             var stats = new Statistics();
             var regressionLine = stats.CalculateLinearRegression(values.ToArray());
             var intercepts = regressionLine.xAxisIntercepts.AsQueryable();
-            string str = String.Join(",", intercepts);
+            string str = String.Join(",\n", intercepts);
         }
 
         public void DetectChangepoint(int docSize)
@@ -129,13 +129,13 @@ namespace Application
 
     }
 
-    // https://stackoverflow.com/questions/43224/how-do-i-calculate-a-trendline-for-a-graph/14235891#14235891
+    // ripped and modified from https://stackoverflow.com/questions/43224/how-do-i-calculate-a-trendline-for-a-graph/14235891#14235891
     public class Statistics
     {
-        public Trendline CalculateLinearRegression(int[] values)
+        public Trendline CalculateLinearRegression(double[] values)
         {
-            var yAxisValues = new List<int>();
-            var xAxisValues = new List<int>();
+            var yAxisValues = new List<double>();
+            var xAxisValues = new List<double>();
 
             for (int i = 0; i < values.Length; i++)
             {
@@ -149,64 +149,64 @@ namespace Application
 
     public class Trendline
     {
-        private readonly IList<int> xAxisValues;
-        private readonly IList<int> yAxisValues;
-        public int[] xAxisIntercepts;
+        private readonly IList<double> xAxisValues;
+        private readonly IList<double> yAxisValues;
+        public double[] xAxisIntercepts;
         private int count;
-        private int xAxisValuesSum;
-        private int xxSum;
-        private int xySum;
-        private int yAxisValuesSum;
+        private double xAxisValuesSum;
+        private double xxSum;
+        private double xySum;
+        private double yAxisValuesSum;
 
-        public Trendline(IList<int> yAxisValues, IList<int> xAxisValues)
+        public Trendline(IList<double> yVals, IList<double> xVals)
         {
-            this.yAxisValues = yAxisValues;
-            this.xAxisValues = xAxisValues;
+            yAxisValues = yVals;
+            xAxisValues = xVals;
 
-            this.Initialize();
+            Initialize();
         }
 
-        public int Slope { get; private set; }
-        public int Intercept { get; private set; }
-        public int Start { get; private set; }
-        public int End { get; private set; }
+        public double Slope { get; private set; }
+        public double Intercept { get; private set; }
+        public double Start { get; private set; }
+        public double End { get; private set; }
 
         private void Initialize()
         {
-            this.count = this.yAxisValues.Count;
-            this.yAxisValuesSum = this.yAxisValues.Sum();
-            this.xAxisValuesSum = this.xAxisValues.Sum();
-            this.xxSum = 0;
-            this.xySum = 0;
+            count = yAxisValues.Count;
+            yAxisValuesSum = yAxisValues.Sum();
+            xAxisValuesSum = xAxisValues.Sum();
+            xxSum = 0;
+            xySum = 0;
 
-            var intercepts = new List<int>();
+            var intercepts = new List<double>();
 
-            for (int i = 0; i < this.count; i++)
+            for (int i = 0; i < count; i++)
             {
-                this.xySum += (this.xAxisValues[i] * this.yAxisValues[i]);
-                this.xxSum += (this.xAxisValues[i] * this.xAxisValues[i]);
+                xySum += (xAxisValues[i] * yAxisValues[i]);
+                xxSum += (xAxisValues[i] * xAxisValues[i]);
             }
 
-            this.Slope = this.CalculateSlope();
-            this.Intercept = this.CalculateIntercept();
-            this.Start = this.CalculateStart();
-            this.End = this.CalculateEnd();
+            Slope = CalculateSlope();
+            Intercept = CalculateIntercept();
+            Start = CalculateStart();
+            End = CalculateEnd();
 
             // track the intercepts for y at each x
-            for (int i = 0; i < this.xAxisValues.Count; i++)
+            for (int i = 0; i < xAxisValues.Count; i++)
             {
-                var xIntercept = (this.Slope * this.xAxisValues[i]) + this.Intercept;
+                var xIntercept = (Slope * xAxisValues[i]) + Intercept;
                 intercepts.Add(xIntercept);
             }
 
             xAxisIntercepts = intercepts.ToArray();
         }
 
-        private int CalculateSlope()
+        private double CalculateSlope()
         {
             try
             {
-                return ((this.count * this.xySum) - (this.xAxisValuesSum * this.yAxisValuesSum)) / ((this.count * this.xxSum) - (this.xAxisValuesSum * this.xAxisValuesSum));
+                return ((count * xySum) - (xAxisValuesSum * yAxisValuesSum)) / ((count * xxSum) - (xAxisValuesSum * xAxisValuesSum));
             }
             catch (DivideByZeroException)
             {
@@ -214,19 +214,19 @@ namespace Application
             }
         }
 
-        private int CalculateIntercept()
+        private double CalculateIntercept()
         {
-            return (this.yAxisValuesSum - (this.Slope * this.xAxisValuesSum)) / this.count;
+            return (yAxisValuesSum - (Slope * xAxisValuesSum)) / count;
         }
 
-        private int CalculateStart()
+        private double CalculateStart()
         {
-            return (this.Slope * this.xAxisValues.First()) + this.Intercept;
+            return (Slope * xAxisValues.First()) + Intercept;
         }
 
-        private int CalculateEnd()
+        private double CalculateEnd()
         {
-            return (this.Slope * this.xAxisValues.Last()) + this.Intercept;
+            return (Slope * xAxisValues.Last()) + Intercept;
         }
     }
 }
